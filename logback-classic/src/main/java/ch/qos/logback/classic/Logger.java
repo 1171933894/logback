@@ -370,17 +370,18 @@ public final class Logger implements org.slf4j.Logger, LocationAwareLogger, Appe
     private void filterAndLog_0_Or3Plus(final String localFQCN, final Marker marker, final Level level, final String msg, final Object[] params,
                     final Throwable t) {
 
+        // Turbo 过滤器会设置一个上下文的阀值，或者根据每一条相关的日志请求信息，例如：Marker, Level， Logger， 消息，Throwable 来过滤某些事件
         final FilterReply decision = loggerContext.getTurboFilterChainDecision_0_3OrMore(marker, this, level, msg, params, t);
 
-        if (decision == FilterReply.NEUTRAL) {
+        if (decision == FilterReply.NEUTRAL) {// FilterReply.NEUTRAL，则会继续执行下一步
             if (effectiveLevelInt > level.levelInt) {
                 return;
             }
-        } else if (decision == FilterReply.DENY) {
+        } else if (decision == FilterReply.DENY) {// FilterReply.DENY，那么这条日志请求将会被丢弃
             return;
         }
 
-        buildLoggingEventAndAppend(localFQCN, marker, level, msg, params, t);
+        buildLoggingEventAndAppend(localFQCN, marker, level, msg, params, t);// 创建一个 LoggingEvent 对象
     }
 
     private void filterAndLog_1(final String localFQCN, final Marker marker, final Level level, final String msg, final Object param, final Throwable t) {
@@ -418,7 +419,7 @@ public final class Logger implements org.slf4j.Logger, LocationAwareLogger, Appe
                     final Throwable t) {
         LoggingEvent le = new LoggingEvent(localFQCN, this, level, msg, t, params);
         le.setMarker(marker);
-        callAppenders(le);
+        callAppenders(le);// 调用 appender
     }
 
     public void trace(String msg) {
